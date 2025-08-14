@@ -30,8 +30,10 @@ def load_config():
 def run_git_command(path: Path, args: list):
     subprocess.run(["git", "-C", str(path)] + args, check=True)
 
-def build_editor_command(editor: str, command: str, vault_name: str, vault_path: Path) -> list:
-    if editor == "obsidian":
+def build_open_with_program_command(program: str, command: str, vault_name: str, vault_path: Path) -> list:
+    if program == "finder":
+        param = vault_path
+    elif program == "obsidian":
         param = f"obsidian://open?vault={vault_name}"
     else:
         param = str(vault_path)
@@ -56,7 +58,7 @@ def do_open(vault_name: str, vault_path: Path, editor: str, editors: dict):
     if editor not in editors:
         print(f"Editor '{editor}' nicht in der Konfiguration.", file=sys.stderr)
         sys.exit(1)
-    cmd = build_editor_command(editor, editors[editor], vault_name, vault_path)
+    cmd = build_open_with_program_command(editor, editors[editor], vault_name, vault_path)
     print(f"Öffne Vault '{vault_name}' mit '{editors[editor]}' ...")
     subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 

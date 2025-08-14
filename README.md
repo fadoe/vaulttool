@@ -97,6 +97,11 @@ vaulttool --help        # Zeigt Usage
 vaulttool update test   # Führt git pull auf Test-Vault aus
 ```
 
+## Aufgaben
+
+- [ ] alle konfigurierten Vaults auflisten
+- [ ] alle konfigurierten Programme auflisten
+
 ## Lizenz
 
 MIT – Verwendung auf eigene Verantwortung.
