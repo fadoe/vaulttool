@@ -99,8 +99,8 @@ vaulttool update test   # Führt git pull auf Test-Vault aus
 
 ## Aufgaben
 
-- [ ] alle konfigurierten Vaults auflisten
-- [ ] alle konfigurierten Programme auflisten
+- [x] alle konfigurierten Vaults auflisten
+- [x] alle konfigurierten Programme auflisten
 
 ## Lizenz
 
