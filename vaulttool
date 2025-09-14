@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 SCRIPT_DIR=`dirname -- "$( readlink -f -- "$0"; )"`
 source "$SCRIPT_DIR/venv/bin/activate"
-python "$SCRIPT_DIR/vaulttool.py" "$@"
+python "$SCRIPT_DIR/cli.py" "$@"
