@@ -1,125 +1,42 @@
-#!/usr/bin/env python3
-import sys
 import subprocess
-from datetime import datetime
-from pathlib import Path
-import yaml
 
-CONFIG_LOCATIONS = [
-    Path.home() / ".local/config/vaulttool/config.yaml",
-    Path.home() / ".config/vaulttool/config.yaml"
-]
+from vault import Vault
 
-def find_config_file():
-    for path in CONFIG_LOCATIONS:
-        if path.exists():
-            return path
-    return None
+class EditorNotFoundError(Exception):
+    pass
 
-def load_config():
-    config_path = find_config_file()
-    if not config_path:
-        print("❌ Konfigurationsdatei nicht gefunden.", file=sys.stderr)
-        print("Erwartete Pfade:", file=sys.stderr)
-        for path in CONFIG_LOCATIONS:
-            print(f"  {path}", file=sys.stderr)
-        sys.exit(1)
-    with config_path.open("r") as f:
-        return yaml.safe_load(f)
+class VaultTool:
+    def __init__(self, config):
+        self.vaults = {name: Vault(name, path) for name, path in config.vaults.items()}
+        self.editors = config.editors
 
-def run_git_command(path: Path, args: list):
-    subprocess.run(["git", "-C", str(path)] + args, check=True)
+    def get_vault(self, name: str) -> Vault:
+        if name not in self.vaults:
+            raise KeyError(f"Vault '{name}' nicht gefunden.")
+        return self.vaults[name]
 
-def build_open_with_program_command(program: str, command: str, vault_name: str, vault_path: Path) -> list:
-    if program == "finder":
-        param = vault_path
-    elif program == "obsidian":
-        param = f"obsidian://open?vault={vault_name}"
-    else:
-        param = str(vault_path)
-    return [command, param]
+    def list_vaults(self):
+        for vault_name, vault in self.vaults.items():
+            print(f"{vault_name} -> {vault.path}")
 
-def do_update(vault_path: Path):
-    run_git_command(vault_path, ['pull', '--rebase', '--autostash'])
+    def list_programs(self):
+        for program, command in self.editors.items():
+            print(f"{program}: {command}")
 
-def do_push(vault_path: Path):
-    run_git_command(vault_path, ['push'])
+    def open_vault(self, vault_name: str, program: str):
+        if program not in self.editors:
+            raise EditorNotFoundError(f"Program '{program}' is not configured.")
 
-def do_repair(vault_path: Path):
-    run_git_command(vault_path, ['restore', '--staged', '.obsidian/workspace.json'])
+        vault = self.get_vault(vault_name)
+        cmd = self._build_open_command(program, vault)
+        print(f"Open vault '{vault_name}' with '{program}' ...")
+        subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-def do_backup(vault_path: Path):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    commit_msg = f"vault backup: {timestamp}"
-    run_git_command(vault_path, ['add', '--all'])
-    run_git_command(vault_path, ['commit', '-m', commit_msg])
-
-def do_open(vault_name: str, vault_path: Path, editor: str, editors: dict):
-    if editor not in editors:
-        print(f"Editor '{editor}' nicht in der Konfiguration.", file=sys.stderr)
-        sys.exit(1)
-    cmd = build_open_with_program_command(editor, editors[editor], vault_name, vault_path)
-    print(f"Öffne Vault '{vault_name}' mit '{editors[editor]}' ...")
-    subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-def do_list_vaults(vaults: list):
-    for vault,path in vaults.items():
-        print(f"{vault} -> {path}")
-
-def do_list_programs(programs: list):
-    for program in programs:
-        print(f"{program}")
-
-def main():
-    # check for parameters
-    if len(sys.argv) < 2:
-        print("Usage: vaulttool.py [update|push|repair|backup|open] [vaultname] [editor (optional)]", file=sys.stderr)
-        sys.exit(1)
-
-    action = sys.argv[1]
-
-    config = load_config()
-    vaults = config.get("vaults", {})
-    editors = config.get("editors", {})
-
-    # call pre actions, list config
-    pre_actions = {
-        "show-config-path": lambda: print(find_config_file()),
-        "list-vaults": lambda: do_list_vaults(vaults),
-        "list-programs": lambda: do_list_programs(editors),
-    }
-
-    if action in pre_actions:
-        pre_actions[action]()
-        sys.exit(0)
-
-    # main actions (update, push, repair, backup, open, create)
-    if len(sys.argv) < 3:
-        print("Usage: vaulttool.py [update|push|repair|backup|open] [vaultname] [editor (optional)]", file=sys.stderr)
-        sys.exit(1)
-
-    vault_name = sys.argv[2]
-    chosen_editor = sys.argv[3] if len(sys.argv) > 3 else "obsidian"
-
-    if vault_name not in vaults:
-        print(f"❌ Vault '{vault_name}' nicht gefunden.", file=sys.stderr)
-        sys.exit(1)
-
-    vault_path = Path(vaults[vault_name]).expanduser()
-
-    actions = {
-        "update": lambda: do_update(vault_path),
-        "push": lambda: do_push(vault_path),
-        "repair": lambda: do_repair(vault_path),
-        "backup": lambda: do_backup(vault_path),
-        "open": lambda: do_open(vault_name, vault_path, chosen_editor, editors),
-    }
-
-    if action not in actions:
-        print(f"❌ Unbekannte Aktion '{action}'.", file=sys.stderr)
-        sys.exit(1)
-
-    actions[action]()
-
-if __name__ == "__main__":
-    main()
+    def _build_open_command(self, program: str, vault: Vault) -> list:
+        if program == "finder":
+            param = vault.path
+        elif program == "obsidian":
+            param = f"obsidian://open?vault={vault.name}"
+        else:
+            param = str(vault.path)
+        return [self.editors[program], param]
