@@ -1,7 +1,7 @@
 import sys
 from vaulttoolconfig import VaultToolConfig, ConfigNotFoundError
 from pathlib import Path
-from vaulttool import VaultTool, EditorNotFoundError
+from vaulttool import VaultTool, EditorNotFoundError, VaultNotFoundError
 
 CONFIG_LOCATIONS = [
     Path.home() / ".local/config/vaulttool/config.yaml",
@@ -44,7 +44,7 @@ def main():
 
     try:
         vault = tool.get_vault(vault_name)
-    except KeyError as e:
+    except VaultNotFoundError as e:
         print(str(e), file=sys.stderr)
         sys.exit(1)
 

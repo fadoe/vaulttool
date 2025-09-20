@@ -8,6 +8,8 @@ from vault import Vault
 class EditorNotFoundError(Exception):
     pass
 
+class VaultNotFoundError(Exception):
+    pass
 
 class VaultTool:
     def __init__(self, config: VaultToolConfig):
@@ -16,7 +18,7 @@ class VaultTool:
 
     def get_vault(self, name: str) -> Vault:
         if name not in self.vaults:
-            raise KeyError(f"Vault '{name}' not found.")
+            raise VaultNotFoundError(f"Vault '{name}' not found.")
         return self.vaults[name]
 
     def list_vaults(self) -> dict[str, Vault]:
