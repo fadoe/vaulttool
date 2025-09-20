@@ -1,5 +1,5 @@
 import subprocess
-from typing import Dict, Any
+from typing import Dict
 
 from vaulttoolconfig import VaultToolConfig
 from vault import Vault
@@ -8,8 +8,10 @@ from vault import Vault
 class EditorNotFoundError(Exception):
     pass
 
+
 class VaultNotFoundError(Exception):
     pass
+
 
 class VaultTool:
     def __init__(self, config: VaultToolConfig):
@@ -21,11 +23,11 @@ class VaultTool:
             raise VaultNotFoundError(f"Vault '{name}' not found.")
         return self.vaults[name]
 
-    def list_vaults(self) -> dict[str, Vault]:
-        return dict(sorted(self.vaults.items()))
+    def list_vaults(self) -> dict[str, str]:
+        return dict((name, str(vault.path)) for name, vault in self.vaults.items())
 
     def list_programs(self) -> dict[str, str]:
-        return dict(sorted(self.editors.items()))
+        return dict(self.editors.items())
 
     def open_vault(self, vault_name: str, program: str) -> None:
         if program not in self.editors:

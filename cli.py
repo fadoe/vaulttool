@@ -26,12 +26,12 @@ def main():
     tool = VaultTool(config)
 
     if action == "list-vaults":
-        for vault_name, vault in tool.vaults.items():
+        for vault_name, vault in sorted(tool.vaults.items()):
             print(f"{vault_name} -> {vault.path}")
         sys.exit(0)
 
     if action == "list-programs":
-        for program, command in tool.editors.items():
+        for program, command in sorted(tool.editors.items()):
             print(f"{program}: {command}")
         sys.exit(0)
 
