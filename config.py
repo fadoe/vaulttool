@@ -7,7 +7,9 @@ class ConfigNotFoundError(Exception):
 class Config:
     def __init__(self, config_locations: list):
         self.config_path = self._find_config(config_locations)
-        self.data = self._load()
+        data = self._load()
+        self._validate_config(data)
+        self.data = data
 
     @staticmethod
     def _find_config(config_locations: list) -> Path:
@@ -19,6 +21,21 @@ class Config:
     def _load(self) -> dict:
         with self.config_path.open("r") as f:
             return yaml.safe_load(f)
+
+    @staticmethod
+    def _validate_config(config: dict) -> None:
+        if not isinstance(config, dict):
+            raise ValueError("Config must be a dictionary.")
+        if "vaults" not in config or not isinstance(config["vaults"], dict):
+            raise ValueError("Config must have a 'vaults' attribute of type dict.")
+        if "editors" not in config or not isinstance(config["editors"], dict):
+            raise ValueError("Config must have an 'editors' attribute of type dict.")
+        for name, path in config["vaults"].items():
+            if not isinstance(name, str) or not isinstance(path, str):
+                raise ValueError("Vault names and paths must be strings.")
+        for program, command in config["editors"].items():
+            if not isinstance(program, str) or not isinstance(command, str):
+                raise ValueError("Editor names and commands must be strings.")
 
     @property
     def vaults(self) -> dict:
