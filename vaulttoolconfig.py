@@ -4,7 +4,7 @@ import yaml
 class ConfigNotFoundError(Exception):
     pass
 
-class Config:
+class VaultToolConfig:
     def __init__(self, config_locations: list):
         self.config_path = self._find_config(config_locations)
         data = self._load()

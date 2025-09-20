@@ -1,5 +1,5 @@
 import sys
-from config import Config, ConfigNotFoundError
+from vaulttoolconfig import VaultToolConfig, ConfigNotFoundError
 from pathlib import Path
 from vaulttool import VaultTool, EditorNotFoundError
 
@@ -16,7 +16,7 @@ def main():
     action = sys.argv[1]
 
     try:
-        config = Config(CONFIG_LOCATIONS)
+        config = VaultToolConfig(CONFIG_LOCATIONS)
     except ConfigNotFoundError:
         print("Configuration file not found.", file=sys.stderr)
         for p in CONFIG_LOCATIONS:

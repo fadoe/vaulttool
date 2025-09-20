@@ -1,7 +1,7 @@
 import subprocess
 from typing import Dict, Any
 
-from config import Config
+from vaulttoolconfig import VaultToolConfig
 from vault import Vault
 
 
@@ -10,7 +10,7 @@ class EditorNotFoundError(Exception):
 
 
 class VaultTool:
-    def __init__(self, config: Config):
+    def __init__(self, config: VaultToolConfig):
         self.vaults: Dict[str, Vault] = {name: Vault(name, path) for name, path in config.vaults.items()}
         self.editors: Dict[str, str] = config.editors
 
