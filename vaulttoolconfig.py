@@ -6,8 +6,8 @@ class ConfigNotFoundError(Exception):
 
 class VaultToolConfig:
     def __init__(self, config_locations: list):
-        self.config_path = self._find_config(config_locations)
-        data = self._load()
+        config_path = self._find_config(config_locations)
+        data = self._load(config_path)
         self._validate_config(data)
         self.data = data
 
@@ -16,10 +16,11 @@ class VaultToolConfig:
         for path in config_locations:
             if path.exists():
                 return path
-        raise ConfigNotFoundError("Configuration not found.")
+        raise ConfigNotFoundError("Configuration not found.", config_locations)
 
-    def _load(self) -> dict:
-        with self.config_path.open("r") as f:
+    @staticmethod
+    def _load(config_path: Path) -> dict:
+        with config_path.open("r") as f:
             return yaml.safe_load(f)
 
     @staticmethod
