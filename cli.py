@@ -25,13 +25,14 @@ def main():
 
     tool = VaultTool(config)
 
-    pre_actions = {
-        "list-vaults": tool.list_vaults,
-        "list-programs": tool.list_programs,
-    }
+    if action == "list-vaults":
+        for vault_name, vault in tool.vaults.items():
+            print(f"{vault_name} -> {vault.path}")
+        sys.exit(0)
 
-    if action in pre_actions:
-        pre_actions[action]()
+    if action == "list-programs":
+        for program, command in tool.editors.items():
+            print(f"{program}: {command}")
         sys.exit(0)
 
     if len(sys.argv) < 3:

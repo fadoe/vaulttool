@@ -19,13 +19,11 @@ class VaultTool:
             raise KeyError(f"Vault '{name}' not found.")
         return self.vaults[name]
 
-    def list_vaults(self) -> None:
-        for vault_name, vault in self.vaults.items():
-            print(f"{vault_name} -> {vault.path}")
+    def list_vaults(self) -> dict[str, Vault]:
+        return dict(sorted(self.vaults.items()))
 
-    def list_programs(self) -> None:
-        for program, command in self.editors.items():
-            print(f"{program}: {command}")
+    def list_programs(self) -> dict[str, str]:
+        return dict(sorted(self.editors.items()))
 
     def open_vault(self, vault_name: str, program: str) -> None:
         if program not in self.editors:
