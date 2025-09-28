@@ -29,12 +29,12 @@ class VaultToolConfig:
             raise ValueError("Config must be a dictionary.")
         if "vaults" not in config or not isinstance(config["vaults"], dict):
             raise ValueError("Config must have a 'vaults' attribute of type dict.")
-        if "editors" not in config or not isinstance(config["editors"], dict):
-            raise ValueError("Config must have an 'editors' attribute of type dict.")
+        if "programs" not in config or not isinstance(config["programs"], dict):
+            raise ValueError("Config must have an 'programs' attribute of type dict.")
         for name, path in config["vaults"].items():
             if not isinstance(name, str) or not isinstance(path, str):
                 raise ValueError("Vault names and paths must be strings.")
-        for program, command in config["editors"].items():
+        for program, command in config["programs"].items():
             if not isinstance(program, str) or not isinstance(command, str):
                 raise ValueError("Editor names and commands must be strings.")
 
@@ -43,5 +43,5 @@ class VaultToolConfig:
         return self.data.get("vaults", {})
 
     @property
-    def editors(self) -> dict:
-        return self.data.get("editors", {})
+    def programs(self) -> dict:
+        return self.data.get("programs", {})

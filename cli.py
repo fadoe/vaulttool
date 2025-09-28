@@ -31,7 +31,7 @@ def main():
         sys.exit(0)
 
     if action == "list-programs":
-        for program, command in sorted(tool.editors.items()):
+        for program, command in sorted(tool.programs.items()):
             print(f"{program}: {command}")
         sys.exit(0)
 

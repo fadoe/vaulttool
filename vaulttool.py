@@ -16,7 +16,7 @@ class VaultNotFoundError(Exception):
 class VaultTool:
     def __init__(self, config: VaultToolConfig):
         self.vaults: Dict[str, Vault] = {name: Vault(name, path) for name, path in config.vaults.items()}
-        self.editors: Dict[str, str] = config.editors
+        self.programs: Dict[str, str] = config.programs
 
     def get_vault(self, name: str) -> Vault:
         if name not in self.vaults:
@@ -27,10 +27,10 @@ class VaultTool:
         return dict((name, str(vault.path)) for name, vault in self.vaults.items())
 
     def list_programs(self) -> dict[str, str]:
-        return dict(self.editors.items())
+        return dict(self.programs.items())
 
     def open_vault(self, vault_name: str, program: str) -> None:
-        if program not in self.editors:
+        if program not in self.programs:
             raise EditorNotFoundError(f"Program '{program}' is not configured.")
 
         vault = self.get_vault(vault_name)
@@ -45,4 +45,4 @@ class VaultTool:
             param = f"obsidian://open?vault={vault.name}"
         else:
             param = str(vault.path)
-        return [self.editors[program], param]
+        return [self.programs[program], param]

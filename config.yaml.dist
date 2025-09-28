@@ -2,6 +2,6 @@ vaults:
   Work: "/pfad/zum/vault/Work"
   Private: "/anderer/vault/Private"
 
-editors:
+programs:
   obsidian: "xdg-open" # xdg-open on linux, open on Mac
   phpstorm: "/opt/phpstorm/bin/phpstorm.sh" # path to phpstorm or other editor or tool

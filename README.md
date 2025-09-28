@@ -2,8 +2,6 @@
 
 `vaulttool` ist ein kleines CLI-Werkzeug zur Verwaltung mehrerer [Obsidian](https://obsidian.md/)-Vaults. Es erlaubt einfache Git-Operationen, das Öffnen von Vaults mit verschiedenen Editoren und die Sicherung per Commit.
 
-> Dieses Programm befindet sich noch in der Entwicklung.
-
 ---
 
 ## Funktionen
@@ -12,7 +10,7 @@
 - `push` – pusht lokale Änderungen ins Remote-Repository
 - `backup` – packt alle Änderungen in einen stash und erstellt einen Commit mit Zeitstempel
 - `repair` – setzt `.obsidian/workspace.json` zurück (nützlich bei UI-Problemen)
-- `open` – öffnet einen Vault mit einem beliebigen konfigurierten Editor (z. B. Obsidian, PhpStorm, VSCode)
+- `open` – öffnet einen Vault mit einem beliebigen konfigurierten Editor (z.B. Obsidian, PhpStorm, VSCode)
 
 ---
 
@@ -30,7 +28,7 @@ vaults:
   Work: ~/Documents/Vaults/Work
   Personal: ~/Documents/Vaults/Personal
 
-editors:
+programs:
   obsidian: xdg-open
   phpstorm: phpstorm
   code: code
@@ -99,8 +97,11 @@ vaulttool update test   # Führt git pull auf Test-Vault aus
 
 ## Aufgaben
 
-- [x] alle konfigurierten Vaults auflisten
-- [x] alle konfigurierten Programme auflisten
+- [ ] per `vaulttool init` einen neuen Vault erstellen und mit Obsidian öffnen
+  - nach Pfad fragen
+  - Pfad anlegen
+  - git initialisieren, das Git-Verhalten beachten!
+  - neu erstellten Vault in Obsidian öffnen
 
 ## Lizenz
 
